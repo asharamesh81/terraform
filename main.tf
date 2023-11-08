@@ -78,7 +78,7 @@ terraform{
 		dynamodb_table = "terraform-state-lock-dynamo"
 		bucket = "terraformtfstatebackup"
 		region = "us-east-1"
-		key = "test.tfstate"
+		key = "aws.tfstate"
 	}
 }
 

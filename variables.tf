@@ -32,11 +32,4 @@ variable "instance_type" {
     }
 }
 
-terraform{
-	backend "s3"{
-		encrypt = true
-		bucket = "terraformtfstatebackup"
-		region = "us-east-1"
-		key = "aws.tfstate"
-	}
-}
+

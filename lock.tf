@@ -9,7 +9,4 @@ resource "aws_dynamodb_table" "dynamodb-terraform-state-lock" {
     type = "S"
   }
  
-  tags {
-    Name = "DynamoDB Terraform State Lock Table"
-  }
 }
