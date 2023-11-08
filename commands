@@ -1,0 +1,14 @@
+terraform init
+terraform plan -var-file test.tfvars
+terraform plan -var-file test.tfvars -out testplan
+terraform apply testplan
+terraform workspace list
+terraform workspace new test
+terraform workspace new prod
+terraform workspace select test
+terraform workspace show
+
+terraform apply --var-file test.tfvars --auto-approve
+terraform validate --var-file test.tfvars
+terraform validate --var-file prod.tfvars
+terraform show |grep -i vpc
