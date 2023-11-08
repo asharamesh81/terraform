@@ -4,5 +4,5 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
-*.commnds.txt
+*.commands.txt
 *.terraform.exe

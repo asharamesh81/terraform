@@ -47,6 +47,15 @@ resource "aws_subnet" "subnet3_public" {
         }
 }
 
+resource "aws_subnet" "subnet4_public" {
+    vpc_id = "${aws_vpc.default.id}"
+    cidr_block = "${var.public_subnet4_cidr}"
+    availability_zone = "us-east-1c"
+        tags = {
+          Name = "${var.public_subnet4_name}"
+        }
+}
+
 resource "aws_security_group" "allow_tls" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
