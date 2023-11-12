@@ -20,43 +20,36 @@ resource "aws_internet_gateway" "default" {
     }
 }
 
-resource "aws_subnet" "subnet1_public" {
+resource "aws_subnet" "subnets_public" {
     vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet1_cidr}"
-    availability_zone = "us-east-1a"
+    count = 3
+    cidr_block = "${element(var.blocks, count.index)}"
+    availability_zone = "${element(var.azs, count.index)}"
         tags = {
-          Name = "${var.public_subnet1_name}"
+          Name = "sola-chatboat-subnet-${count.index+1}"
         }
 }
 
-resource "aws_subnet" "subnet2_public" {
-    vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet2_cidr}"
-    availability_zone = "us-east-1b"
-        tags = {
-          Name = "${var.public_subnet2_name}"
-        }
+resource "aws_route_table" "sola-chat_public" {
+  vpc_id = "${aws_vpc.default.id}"
+  route{
+    cidr_block = "0.0.0.0/0"
+    gateway_id = "${aws_internet_gateway.default.id}"
+  }
+
+  tags = {
+    Name = "${var.sola-chatboat-public_route_table}"
+  }
 }
 
-resource "aws_subnet" "subnet3_public" {
-    vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet3_cidr}"
-    availability_zone = "us-east-1c"
-        tags = {
-          Name = "${var.public_subnet3_name}"
-        }
+resource "aws_route_table_association" "sola-chat_public" {
+  count = "${length(var.blocks)}" #count = 3
+  subnet_id = "${element(aws_subnet.subnets_public.*.id, count.index) }"
+  route_table_id = "${aws_route_table.sola-chat_public.id}"
+  
 }
 
-resource "aws_subnet" "subnet4_public" {
-    vpc_id = "${aws_vpc.default.id}"
-    cidr_block = "${var.public_subnet4_cidr}"
-    availability_zone = "us-east-1c"
-        tags = {
-          Name = "${var.public_subnet4_name}"
-        }
-}
-
-resource "aws_security_group" "allow_tls" {
+resource "aws_security_group" "allow_all" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
   vpc_id      = aws_vpc.default.id
@@ -77,14 +70,15 @@ resource "aws_security_group" "allow_tls" {
   }
 
   tags = {
-    Name = "allow_tls"
+    Name = "allow_all"
   }
 }
+
 
 terraform{
 	backend "s3"{
 		encrypt = true
-		dynamodb_table = "terraform-state-lock-dynamo"
+		#dynamodb_table = "terraform-state-lock-dynamo"
 		bucket = "terraformtfstatebackup"
 		region = "us-east-1"
 		key = "aws.tfstate"
